@@ -273,8 +273,41 @@
             </div>
         </div>
 
-        <div class="home-link">
+        <div class="home-link" style="display: flex; justify-content: space-between; align-items: center;">
             <a href="/">← 返回主页上传文件</a>
+            <button id="reportBtn" class="hidden"
+                style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.75rem;">
+                🚩 举报此文件
+            </button>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="hidden"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: var(--bg-card); border-radius: 1rem; padding: 1.5rem; max-width: 400px; width: 90%;">
+            <h3 style="margin-bottom: 1rem;">🚩 举报此文件</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                如果此文件包含违规内容，请告诉我们。
+            </p>
+            <select id="reportReason"
+                style="width: 100%; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+                <option value="">选择原因...</option>
+                <option value="illegal">违法内容</option>
+                <option value="copyright">侵犯版权</option>
+                <option value="malware">恶意软件/病毒</option>
+                <option value="privacy">侵犯隐私</option>
+                <option value="other">其他</option>
+            </select>
+            <input id="reportEmail" type="email" placeholder="您的邮箱（可选，用于反馈）"
+                style="width: 100%; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text-primary); margin-bottom: 1rem;">
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="cancelReport"
+                    style="flex: 1; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text-primary); cursor: pointer;">取消</button>
+                <button id="submitReport"
+                    style="flex: 1; padding: 0.75rem; background: var(--accent); border: none; border-radius: 0.5rem; color: white; cursor: pointer;">提交举报</button>
+            </div>
+            <div id="reportResult" style="margin-top: 1rem; text-align: center; font-size: 0.875rem;"></div>
         </div>
     </div>
 
@@ -379,6 +412,9 @@
                     warningBox.textContent = `⚠️ 仅剩 ${remaining} 次下载机会`;
                 }
 
+                // Show report button
+                if (typeof enableReportBtn === 'function') enableReportBtn();
+
                 return true;
 
             } catch (error) {
@@ -459,7 +495,85 @@
         } else {
             loadFileInfo();
         }
+
+        // Report functionality
+        const reportBtn = document.getElementById('reportBtn');
+        const reportModal = document.getElementById('reportModal');
+        const reportReason = document.getElementById('reportReason');
+        const reportEmail = document.getElementById('reportEmail');
+        const cancelReport = document.getElementById('cancelReport');
+        const submitReport = document.getElementById('submitReport');
+        const reportResult = document.getElementById('reportResult');
+
+        // Show report button when file is loaded
+        function enableReportBtn() {
+            reportBtn.classList.remove('hidden');
+        }
+
+        reportBtn.addEventListener('click', () => {
+            reportModal.classList.remove('hidden');
+            reportModal.style.display = 'flex';
+        });
+
+        cancelReport.addEventListener('click', () => {
+            reportModal.classList.add('hidden');
+            reportModal.style.display = 'none';
+        });
+
+        submitReport.addEventListener('click', async () => {
+            const reason = reportReason.value;
+            if (!reason) {
+                reportResult.textContent = '请选择举报原因';
+                reportResult.style.color = 'var(--error)';
+                return;
+            }
+
+            submitReport.disabled = true;
+            submitReport.textContent = '提交中...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/report/${transferId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reason: reason,
+                        email: reportEmail.value
+                    })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    reportResult.textContent = '✅ 举报已提交，感谢您的反馈！';
+                    reportResult.style.color = 'var(--success)';
+                    setTimeout(() => {
+                        reportModal.classList.add('hidden');
+                        reportModal.style.display = 'none';
+                    }, 2000);
+                } else {
+                    reportResult.textContent = data.error || '提交失败';
+                    reportResult.style.color = 'var(--error)';
+                }
+            } catch (err) {
+                reportResult.textContent = '网络错误，请稍后重试';
+                reportResult.style.color = 'var(--error)';
+            }
+
+            submitReport.disabled = false;
+            submitReport.textContent = '提交举报';
+        });
     </script>
+
+    <div style="position: fixed; bottom: 1rem; right: 1rem; opacity: 0.7;">
+        <a href="https://github.com/Myfastools/anytransfer" target="_blank"
+            style="display: flex; align-items: center; gap: 0.5rem; color: #a1a1aa; text-decoration: none; font-size: 0.75rem; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+            ⭐ Star on GitHub
+        </a>
+    </div>
 </body>
 
 </html>
