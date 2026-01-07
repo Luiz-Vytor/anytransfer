@@ -1,0 +1,34 @@
+name = "anytransfer"
+main = "src/index.ts"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat"]
+
+# Static assets
+[assets]
+directory = "./public"
+
+# KV Namespace for transfer metadata
+# Create with: npx wrangler kv namespace create TRANSFERS_KV
+# Create preview with: npx wrangler kv namespace create TRANSFERS_KV --preview
+[[kv_namespaces]]
+binding = "TRANSFERS_KV"
+id = "YOUR_KV_NAMESPACE_ID"
+preview_id = "YOUR_KV_PREVIEW_NAMESPACE_ID"
+
+# R2 Bucket for file storage
+# Create with: npx wrangler r2 bucket create anytransfer-files
+[[r2_buckets]]
+binding = "FILES_R2"
+bucket_name = "anytransfer-files"
+preview_bucket_name = "anytransfer-files-preview"
+
+[vars]
+MAX_FILE_SIZE = "104857600"  # 100MB default
+DEFAULT_EXPIRY_HOURS = "24"
+DEFAULT_MAX_DOWNLOADS = "10"
+R2_BUCKET_NAME = "anytransfer-files"
+
+# R2 S3-compatible API credentials (set via wrangler secret, NOT here!)
+# npx wrangler secret put R2_ACCOUNT_ID
+# npx wrangler secret put R2_ACCESS_KEY_ID
+# npx wrangler secret put R2_SECRET_ACCESS_KEY

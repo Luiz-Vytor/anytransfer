@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="安全便捷的临时文件传输服务，即时获取提取码，无需等待上传完成">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <title>AnyTransfer - 临时文件传输</title>
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --border: #27272a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo p {
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 0.75rem;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .dropzone-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .dropzone-text {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .dropzone-hint {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .progress-container {
+      margin-top: 1.5rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-icon {
+      font-size: 2rem;
+    }
+
+    .file-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-size {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* Code display for 提取码 */
+    .code-display {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.75rem;
+      text-align: center;
+      border: 1px solid var(--success);
+    }
+
+    .code-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .code-value {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Fira Code', 'SF Mono', monospace;
+      letter-spacing: 0.2em;
+      color: var(--success);
+    }
+
+    .code-url {
+      margin-top: 1rem;
+    }
+
+    .code-url input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    .code-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.75rem;
+      text-align: center;
+    }
+
+    .result.success {
+      border: 1px solid var(--success);
+    }
+
+    .result.error {
+      border: 1px solid var(--error);
+    }
+
+    .result.uploading {
+      border: 1px solid var(--warning);
+    }
+
+    .result-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+    }
+
+    .settings {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .settings-title {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .setting-label {
+      font-size: 0.875rem;
+    }
+
+    .setting-input {
+      width: 100px;
+      padding: 0.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .meta {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .new-transfer {
+      margin-top: 1rem;
+      width: 100%;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .status-indicator.uploading {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+    }
+
+    .status-indicator.complete {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>🚀 AnyTransfer</h1>
+      <p>安全便捷的临时文件传输</p>
+    </div>
+
+    <div class="card">
+      <!-- Upload Zone -->
+      <div id="uploadZone" class="dropzone">
+        <div class="dropzone-icon">📁</div>
+        <div class="dropzone-text">拖放文件到这里或点击选择</div>
+        <div class="dropzone-hint">最大 100MB</div>
+        <input type="file" id="fileInput" class="file-input">
+      </div>
+
+      <!-- Settings -->
+      <div id="settingsSection" class="settings">
+        <div class="settings-title">传输设置</div>
+        <div class="setting-row">
+          <span class="setting-label">过期时间（小时）</span>
+          <input type="number" id="expiryHours" class="setting-input" value="24" min="1" max="168">
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">最大下载次数</span>
+          <input type="number" id="maxDownloads" class="setting-input" value="10" min="1" max="100">
+        </div>
+      </div>
+
+      <!-- Code Display (shows immediately after file selection) -->
+      <div id="codeDisplay" class="code-display hidden">
+        <div class="code-label">提取码</div>
+        <div id="codeValue" class="code-value">--------</div>
+        <div id="uploadStatus" class="status-indicator uploading pulse">
+          ⏳ 上传中...
+        </div>
+        <div class="code-url">
+          <input type="text" id="codeUrl" readonly placeholder="下载链接">
+        </div>
+        <div class="code-actions">
+          <button id="copyCodeBtn" class="btn btn-primary">复制链接</button>
+        </div>
+        <div id="codeMeta" class="meta"></div>
+      </div>
+
+      <!-- Progress -->
+      <div id="progressContainer" class="progress-container hidden">
+        <div class="file-info">
+          <div class="file-icon">📄</div>
+          <div class="file-details">
+            <div id="fileName" class="file-name">-</div>
+            <div id="fileSize" class="file-size">-</div>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text">
+          <span id="progressPercent">0%</span>
+          <span id="progressStatus">准备中...</span>
+        </div>
+      </div>
+
+      <!-- Error Result -->
+      <div id="errorContainer" class="result error hidden">
+        <div class="result-icon">❌</div>
+        <div id="errorTitle" class="result-title">上传失败</div>
+        <div id="errorMessage" class="meta"></div>
+        <button id="retryBtn" class="btn btn-secondary new-transfer">重试</button>
+      </div>
+
+      <!-- New Transfer Button (after completion) -->
+      <button id="newTransferBtn" class="btn btn-secondary new-transfer hidden">上传新文件</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const settingsSection = document.getElementById('settingsSection');
+    const codeDisplay = document.getElementById('codeDisplay');
+    const codeValue = document.getElementById('codeValue');
+    const codeUrl = document.getElementById('codeUrl');
+    const codeMeta = document.getElementById('codeMeta');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressStatus = document.getElementById('progressStatus');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const errorContainer = document.getElementById('errorContainer');
+    const errorTitle = document.getElementById('errorTitle');
+    const errorMessage = document.getElementById('errorMessage');
+    const retryBtn = document.getElementById('retryBtn');
+    const newTransferBtn = document.getElementById('newTransferBtn');
+    const expiryHoursInput = document.getElementById('expiryHours');
+    const maxDownloadsInput = document.getElementById('maxDownloads');
+
+    let currentFile = null;
+
+    // Format file size
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+    }
+
+    // Format date
+    function formatDate(timestamp) {
+      return new Date(timestamp).toLocaleString('zh-CN');
+    }
+
+    // Drag and drop
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    uploadZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        handleFile(fileInput.files[0]);
+      }
+    });
+
+    // Handle file upload
+    async function handleFile(file) {
+      currentFile = file;
+
+      // Update UI to show file info
+      fileName.textContent = file.name;
+      fileSize.textContent = formatSize(file.size);
+
+      // Hide upload zone and settings, show progress
+      uploadZone.classList.add('hidden');
+      settingsSection.classList.add('hidden');
+      progressContainer.classList.remove('hidden');
+      errorContainer.classList.add('hidden');
+      newTransferBtn.classList.add('hidden');
+
+      progressFill.style.width = '0%';
+      progressPercent.textContent = '0%';
+      progressStatus.textContent = '初始化...';
+
+      try {
+        // Step 1: Initialize transfer and get 提取码 + upload URL
+        const initRes = await fetch(API_BASE + '/api/init', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            expiryHours: parseInt(expiryHoursInput.value) || 24,
+            maxDownloads: parseInt(maxDownloadsInput.value) || 10
+          })
+        });
+
+        if (!initRes.ok) {
+          const errData = await initRes.json();
+          throw new Error(errData.error || '初始化失败');
+        }
+
+        const initData = await initRes.json();
+        const { id, uploadUrl, expiresAt, maxDownloads } = initData;
+
+        // ✅ Immediately show 提取码!
+        codeDisplay.classList.remove('hidden');
+        codeValue.textContent = id;
+        codeUrl.value = `${window.location.origin}/t/${id}`;
+        codeMeta.textContent = `过期: ${formatDate(expiresAt)} | 最大下载: ${maxDownloads}次`;
+        uploadStatus.className = 'status-indicator uploading pulse';
+        uploadStatus.innerHTML = '⏳ 上传中...';
+
+        progressStatus.textContent = '上传中...';
+
+        // Step 2: Upload file directly to R2 via presigned URL
+        await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              progressFill.style.width = percent + '%';
+              progressPercent.textContent = percent + '%';
+            }
+          });
+
+          xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve();
+            } else {
+              reject(new Error(`上传失败: ${xhr.status}`));
+            }
+          });
+
+          xhr.addEventListener('error', () => reject(new Error('网络错误')));
+
+          xhr.open('PUT', uploadUrl);
+          xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+          xhr.send(file);
+        });
+
+        progressStatus.textContent = '确认中...';
+
+        // Step 3: Confirm upload completion
+        const completeRes = await fetch(API_BASE + `/api/complete/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: file.name,
+            size: file.size,
+            contentType: file.type || 'application/octet-stream'
+          })
+        });
+
+        if (!completeRes.ok) {
+          const errData = await completeRes.json();
+          throw new Error(errData.error || '确认失败');
+        }
+
+        // ✅ Upload complete!
+        progressContainer.classList.add('hidden');
+        uploadStatus.className = 'status-indicator complete';
+        uploadStatus.innerHTML = '✅ 上传完成';
+        newTransferBtn.classList.remove('hidden');
+
+      } catch (error) {
+        console.error('Upload error:', error);
+
+        // Show error
+        progressContainer.classList.add('hidden');
+        codeDisplay.classList.add('hidden');
+        errorContainer.classList.remove('hidden');
+        errorMessage.textContent = error.message || '请稍后重试';
+      }
+    }
+
+    // Copy URL
+    copyCodeBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(codeUrl.value);
+        copyCodeBtn.textContent = '已复制!';
+        setTimeout(() => copyCodeBtn.textContent = '复制链接', 2000);
+      } catch {
+        codeUrl.select();
+        document.execCommand('copy');
+        copyCodeBtn.textContent = '已复制!';
+        setTimeout(() => copyCodeBtn.textContent = '复制链接', 2000);
+      }
+    });
+
+    // Retry
+    retryBtn.addEventListener('click', () => {
+      if (currentFile) {
+        handleFile(currentFile);
+      } else {
+        resetUI();
+      }
+    });
+
+    // New transfer
+    newTransferBtn.addEventListener('click', resetUI);
+
+    function resetUI() {
+      uploadZone.classList.remove('hidden');
+      settingsSection.classList.remove('hidden');
+      progressContainer.classList.add('hidden');
+      codeDisplay.classList.add('hidden');
+      errorContainer.classList.add('hidden');
+      newTransferBtn.classList.add('hidden');
+      fileInput.value = '';
+      currentFile = null;
+    }
+  </script>
+</body>
+
+</html>
